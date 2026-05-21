@@ -45,11 +45,23 @@ async function gql(query, variables) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${API_KEY}`,
+      'Authorization': API_KEY,   // Hashnode PATs are used directly, no Bearer prefix
     },
     body: JSON.stringify({ query, variables }),
   });
-  const json = await res.json();
+
+  const rawText = await res.text();
+  console.log(`  API status: ${res.status} | Content-Type: ${res.headers.get('content-type')}`);
+
+  let json;
+  try {
+    json = JSON.parse(rawText);
+  } catch {
+    // Log first 300 chars of unexpected response to help debug
+    console.error(`  Raw response (first 300 chars): ${rawText.slice(0, 300)}`);
+    throw new Error(`Hashnode API returned non-JSON (status ${res.status})`);
+  }
+
   if (json.errors) throw new Error(JSON.stringify(json.errors, null, 2));
   return json.data;
 }
