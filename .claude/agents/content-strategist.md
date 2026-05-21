@@ -60,7 +60,7 @@ Common mistakes or angles already overdone in the space.
 - **One takeaway per article.** If the brief has more than one key promise, split it into multiple briefs.
 - **Anchor to real companies and frameworks.** Don't accept vague claims. If the analyst said "many companies use data contracts," dig into *which* companies, *what* implementation, *which paper or blog post*.
 - **Always include a metaphor.** Data topics get abstract fast. A strong everyday analogy is the difference between a reader finishing the article or bouncing.
-- **Read prior posts.** Before planning, glance at what's already in `posts/` or `content/` so you can suggest internal links and avoid repetition.
+- **Read prior posts.** Before planning, glance at what's already in `content/posts/` so you can suggest internal links and avoid repetition.
 
 ## Handoff
 

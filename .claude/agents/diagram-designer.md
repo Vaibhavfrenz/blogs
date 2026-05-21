@@ -46,7 +46,7 @@ Insert images like this in the article markdown — use **relative paths**, not 
 - **Under 15 nodes.** PaperMod's content column is ~720px wide — complex diagrams become unreadable on mobile. Split large diagrams into two focused ones.
 - **Label edges with verbs** ("validates," "publishes," "rejects," "reads") not nouns
 - **Consistent shapes:** rectangles for processes, cylinders for storage `[(...)]`, diamonds for decisions `{...}`
-- **Neutral palette only.** No pure black (`#000`) text — use `#333`. No pure white fills. Use `fill:#e8e8e8,color:#333,stroke:#999` for neutral nodes. This ensures diagrams read in both Hashnode's light and dark modes.
+- **Neutral palette only.** No pure black (`#000`) text — use `#333`. No pure white fills. Use `fill:#e8e8e8,color:#333,stroke:#999` for neutral nodes. This ensures diagrams read in both PaperMod's light and dark modes.
 - **No hyperlinks or tooltips in node labels** — these cause silent render failures in mmdc
 - **Escape special characters:** wrap labels containing `()`, `:`, or `"` in double quotes: `A["Node (with parens)"]`
 - **Diagram types that render cleanly:** `flowchart`, `sequenceDiagram`, `classDiagram`, `erDiagram`, `stateDiagram-v2`
@@ -63,7 +63,7 @@ flowchart LR
 
 Example of what you insert in the article markdown:
 ```markdown
-![Flowchart showing raw events validated at schema check before reaching the Iceberg table; invalid events go to a dead-letter queue.](https://raw.githubusercontent.com/Vaibhavfrenz/blogs/main/blogs/diagrams/article-slug-diagram1.svg)
+![Flowchart showing raw events validated at schema check before reaching the Iceberg table; invalid events go to a dead-letter queue.](../../diagrams/article-slug-diagram1.svg)
 
 *Bad rows get quarantined before they pollute downstream tables — the kitchen's quality check before food reaches the pass.*
 ```

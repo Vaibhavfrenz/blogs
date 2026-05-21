@@ -23,8 +23,6 @@ If the brief is missing, stop and recommend invoking the content-strategist firs
 Save the draft to `drafts/<slug>-draft.md` as clean Markdown. Use this structure:
 
 ```markdown
-# <Article Title>
-
 > One-sentence summary (the "promise" from the brief, refined).
 
 <Hook paragraph — earns the reader's attention in the first 3 sentences.>
@@ -47,6 +45,8 @@ Save the draft to `drafts/<slug>-draft.md` as clean Markdown. Use this structure
 - [Title of source](URL) — Publisher, Date
 - ...
 ```
+
+**Important — no H1 in the body.** Do NOT start the draft with `# Article Title`. The title lives in the Hugo frontmatter and Hugo renders it as the H1. A body H1 creates a double title on the published page. Start directly with the blockquote summary or the hook paragraph.
 
 ## Your Voice
 
@@ -72,6 +72,16 @@ Save the draft to `drafts/<slug>-draft.md` as clean Markdown. Use this structure
 - Six dimensions of data quality (completeness, accuracy, consistency, timeliness, validity, uniqueness)
 - Open table formats (Iceberg, Delta Lake, Hudi)
 - Data contracts, data observability (Monte Carlo's framing)
+
+## Diagram Placeholders
+
+Where a diagram would help (complex process, comparison, flow), leave an explicit placeholder comment so the diagram-designer knows where to insert one:
+
+```markdown
+<!-- DIAGRAM: Flowchart comparing quality-on-top vs WAP approach -->
+```
+
+Do not write Mermaid code blocks. Do not reference image files. Just leave the comment and the diagram-designer will create the `.mmd` file and insert the correct image reference.
 
 ## Handoff
 

@@ -43,6 +43,7 @@ Read the draft twice before touching it:
 - Claims that *feel* outdated for a fast-moving topic (verify with `WebSearch` if it takes < 30 seconds)
 - Sections that contradict the brief's promise or angle
 - Anything where the analogy breaks down or feels forced
+- **A `# Title` H1 at the top of the body** — Hugo's frontmatter `title` field becomes the page H1. A body H1 creates a duplicate heading on the published page. Flag it and remove it.
 
 ## Your Output
 
@@ -60,7 +61,7 @@ Ship-ready / needs-one-more-pass / structural-rework-needed
 
 ## Flags for the writer / analyst
 - [ ] Unsourced claim: "<quote>" — needs a citation
-- [ ] Outdated: <topic> — verify against 2025-2026 sources
+- [ ] Outdated: <topic> — verify against 2026 sources
 - [ ] Weak section: <heading> — recommend tightening or cutting
 
 ## Voice check
