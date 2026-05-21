@@ -1,0 +1,48 @@
+name: Publish to Hashnode
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'blogs/**/*.md'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Get changed markdown files
+        id: changed-files
+        run: |
+          CHANGED=$(git diff --name-only HEAD~1 HEAD -- 'blogs/*.md' | tr '\n' ' ')
+          echo "files=$CHANGED" >> $GITHUB_OUTPUT
+
+      - name: Publish to Hashnode
+        if: steps.changed-files.outputs.files != ''
+        env:
+          HASHNODE_TOKEN: ${{ secrets.HASHNODE_TOKEN }}
+          PUBLICATION_ID: "6a0e5ae48b03460221ceb78f"
+        run: |
+          for FILE in ${{ steps.changed-files.outputs.files }}; do
+            echo "Publishing $FILE..."
+            TITLE=$(grep -m1 '^# ' "$FILE" | sed 's/^# //')
+            SLUG=$(basename "$FILE" .md)
+            CONTENT=$(cat "$FILE")
+            CONTENT_ESCAPED=$(echo "$CONTENT" | python3 -c "import sys,json; print(json.dumps(sys.stdin.read()))")
+            TITLE_ESCAPED=$(echo "$TITLE" | python3 -c "import sys,json; print(json.dumps(sys.stdin.read().strip()))")
+            RESPONSE=$(curl -s -X POST https://gql.hashnode.com/ \
+              -H "Content-Type: application/json" \
+              -H "Authorization: $HASHNODE_TOKEN" \
+              -d "{\"query\": \"mutation PublishPost(\$input: PublishPostInput!) { publishPost(input: \$input) { post { id title url } } }\", \"variables\": { \"input\": { \"title\": $TITLE_ESCAPED, \"slug\": \"$SLUG\", \"contentMarkdown\": $CONTENT_ESCAPED, \"publicationId\": \"$PUBLICATION_ID\", \"tags\": [] } } }")
+            echo "Response: $RESPONSE"
+            if echo "$RESPONSE" | grep -q '"errors"'; then
+              echo "Error publishing $FILE"
+              exit 1
+            fi
+            echo "Successfully published: $FILE"
+          done
