@@ -36,6 +36,8 @@ jobs:
       - name: Render Mermaid diagrams → static/diagrams/
         run: |
           mkdir -p static/diagrams
+          # GitHub Actions runners block Chromium's sandbox — pass --no-sandbox via puppeteer config
+          echo '{"args":["--no-sandbox"]}' > /tmp/puppeteer-config.json
           find diagrams -name "*.mmd" | while read f; do
             name=$(basename "${f%.mmd}")
             out="static/diagrams/${name}.svg"
@@ -46,6 +48,7 @@ jobs:
               --theme neutral \
               --backgroundColor transparent \
               --width 1200 \
+              --puppeteerConfigFile /tmp/puppeteer-config.json \
               --quiet
           done
 
