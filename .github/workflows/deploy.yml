@@ -1,0 +1,75 @@
+name: Deploy Hugo site to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:   # allow manual re-runs from the Actions UI
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Only one deploy runs at a time; a new push cancels an in-flight deploy.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (with PaperMod submodule)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0          # full history so Hugo's .Lastmod works
+
+      - name: Setup Node.js (for Mermaid CLI)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Mermaid CLI
+        run: npm install -g @mermaid-js/mermaid-cli
+
+      - name: Render Mermaid diagrams → static/diagrams/
+        run: |
+          mkdir -p static/diagrams
+          find diagrams -name "*.mmd" | while read f; do
+            name=$(basename "${f%.mmd}")
+            out="static/diagrams/${name}.svg"
+            echo "Rendering $f → $out"
+            mmdc \
+              --input "$f" \
+              --output "$out" \
+              --theme neutral \
+              --backgroundColor transparent \
+              --width 1200 \
+              --quiet
+          done
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: 'latest'
+          extended: true
+
+      - name: Build Hugo site
+        run: hugo --minify
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

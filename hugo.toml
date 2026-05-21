@@ -1,0 +1,49 @@
+baseURL = "https://vaibhavfrenz.github.io/blogs/"
+languageCode = "en-us"
+title = "Vaibhavfrenz | Data Engineering"
+theme = "PaperMod"
+paginate = 10
+enableRobotsTXT = true
+buildDrafts = false
+buildFuture = false
+
+[params]
+  env = "production"
+  author = "Vaibhav"
+  description = "Practical data engineering patterns — DAMA pillars, FAANG playbooks, and the architecture that actually ships."
+  defaultTheme = "auto"
+  ShowReadingTime = true
+  ShowShareButtons = false
+  ShowPostNavLinks = true
+  ShowCodeCopyButtons = true
+  ShowFullTextinRSS = true
+  ShowToc = true
+  TocOpen = false
+  disableThemeToggle = false
+
+[params.homeInfoParams]
+  Title = "Data Engineering Insights"
+  Content = "Practical patterns from FAANG and beyond — anchored to DAMA, built for teams that ship."
+
+[[params.socialIcons]]
+  name = "github"
+  url = "https://github.com/Vaibhavfrenz"
+
+[[params.socialIcons]]
+  name = "hashnode"
+  url = "https://vaibhavfrenz.hashnode.dev"
+
+[taxonomies]
+  tag = "tags"
+  category = "categories"
+
+[markup.highlight]
+  noClasses = false
+  anchorLineNos = true
+  codeFences = true
+  guessSyntax = true
+  lineNos = true
+  style = "monokai"
+
+[markup.goldmark.renderer]
+  unsafe = true   # allows raw HTML in Markdown (needed for SVG embeds)
