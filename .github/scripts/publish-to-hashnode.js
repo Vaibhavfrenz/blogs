@@ -10,7 +10,7 @@ const { execSync } = require('child_process');
 
 const API_KEY = process.env.HASHNODE_API_KEY;
 const PUBLICATION_ID = process.env.HASHNODE_PUBLICATION_ID;
-const GQL = 'https://gql.hashnode.com';h
+const GQL = 'https://gql.hashnode.com';
 
 if (!API_KEY || !PUBLICATION_ID) {
   console.error('Missing HASHNODE_API_KEY or HASHNODE_PUBLICATION_ID');
