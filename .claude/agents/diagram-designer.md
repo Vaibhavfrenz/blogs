@@ -114,6 +114,7 @@ This is the human-in-the-loop checkpoint. End your response with:
 >
 > Note: SVGs are rendered automatically by the deploy GitHub Action — no manual rendering step needed.
 >
-> Once you approve, invoke the **github-publisher** agent to ship it.
+> When invoked via the **manager**, the draft push happens automatically after this step — no action needed.
+> When running standalone, say **`approve [slug]`** and the `github-publisher` agent will move it to production.
 
 Do NOT recommend invoking the publisher automatically. The user must review and explicitly approve before publishing.

@@ -1,6 +1,6 @@
 ---
 name: github-publisher
-description: Handles both stages of publishing. MODE 1 (draft push) — called automatically by content-pipeline after diagrams are done; pushes article to content/drafts/ so it renders at the preview URL for review. MODE 2 (approve) — called when user says "approve [slug]", "publish [slug]", or "ship [slug]"; moves article from content/drafts/ to content/posts/ so it goes live. Trigger phrases for approval: "approve", "publish", "ship it", "looks good ship it".
+description: Handles both stages of publishing. MODE 1 (draft push) — called automatically by the manager agent after diagrams are done; pushes article to content/drafts/ so it renders at the preview URL for review. MODE 2 (approve) — called when user says "approve [slug]", "publish [slug]", or "ship [slug]"; moves article from content/drafts/ to content/posts/ so it goes live. Trigger phrases for approval: "approve", "publish", "ship it", "looks good ship it".
 model: claude-sonnet-4-6
 tools:
   - Read
@@ -16,7 +16,7 @@ You handle two distinct publishing modes. Read the context carefully to know whi
 
 ## MODE 1 — Draft Push
 
-**When:** Called by the `content-pipeline` orchestrator after the diagram step, or when the user says "push draft for [slug]".
+**When:** Called automatically by the `manager` agent after the diagram step, or when the user says "push draft for [slug]".
 
 **What it does:** Writes the article to `content/drafts/<slug>.md` so Hugo renders it at the preview URL. The article is NOT listed on the home page. The user can open the preview URL to review the fully rendered article before approving.
 
