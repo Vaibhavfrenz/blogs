@@ -1,0 +1,16 @@
+sequenceDiagram
+    participant W as Writer (Spark / dbt)
+    participant B as Hidden branch
+    participant A as Auditor (dbt / GE / Soda)
+    participant M as main snapshot
+    participant C as Consumer (BI / ML)
+    C->>M: reads last good snapshot
+    W->>B: writes new data to branch
+    A->>B: runs quality checks
+    alt checks pass
+        A->>M: fast-forward commit (metadata only)
+        C->>M: now sees new snapshot
+    else checks fail
+        A--xB: branch kept for forensics
+        Note over M,C: main never moved — consumer still on good snapshot
+    end

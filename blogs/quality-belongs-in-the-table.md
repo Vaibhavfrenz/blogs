@@ -1,4 +1,16 @@
-# Quality belongs in the table, not on top of it
+---
+title: "Quality Belongs in the Table, Not on Top of It"
+subtitle: "Netflix's WAP pattern shows where data quality really belongs — and most teams can steal it without rebuilding Netflix"
+slug: "quality-belongs-in-the-table"
+tags: "data-engineering, dataops, data-architecture"
+domain: "YOUR-BLOG.hashnode.dev"
+cover: "https://cdn.hashnode.com/res/hashnode/image/upload/PLACEHOLDER"
+saveAsDraft: false
+ignorePost: false
+enableToc: true
+seoTitle: "Quality Belongs in the Table, Not on Top of It | Netflix WAP Pattern"
+seoDescription: "Netflix pushed data quality into Iceberg's storage layer via Write-Audit-Publish. Here's how to adopt it in 90 days without rebuilding Netflix's platform."
+---
 
 > Netflix's quietest contribution to data engineering was pushing quality into the storage layer through Iceberg's Write-Audit-Publish pattern — and most teams can steal it without rebuilding Netflix.
 
@@ -20,23 +32,8 @@ The cost is not just the broken dashboard. It is the rollback, the Slack thread,
 
 This is the layer the industry got wrong. Catalogs, observability vendors, post-publish tests — all of them sit on top of the table. None of them stops the table from going bad in the first place.
 
-```mermaid
-flowchart LR
-    subgraph TOP["Quality-on-top (today)"]
-        A1[Spark / dbt job] -->|writes to| B1[(main table)]
-        B1 -->|visible to| C1[Dashboards]
-        B1 -->|then checked by| D1[dbt tests / Monte Carlo]
-        D1 -->|fires| E1[Slack alert]
-        E1 -.->|too late| C1
-    end
-    subgraph WAP["Quality-in-the-table (WAP)"]
-        A2[Spark / dbt job] -->|writes to| B2[(Hidden branch)]
-        B2 -->|inspected by| D2{Audit passes?}
-        D2 -->|Yes| F2[(main table)]
-        D2 -->|No| G2[Branch quarantined]
-        F2 -->|visible to| C2[Dashboards]
-    end
-```
+![Quality-on-top vs Write-Audit-Publish side by side. The old model alerts after bad data is already visible; WAP inspects before consumers can see it.](https://raw.githubusercontent.com/Vaibhavfrenz/blogs/main/blogs/diagrams/quality-diagram-comparison.svg)
+
 *The old model alerts you after the bad row is already on dashboards. WAP inspects the plate before it crosses the line — consumers reading `main` never see a failed batch.*
 
 ## Netflix's insight: make the table itself transactional
@@ -55,24 +52,8 @@ The mechanism is exposed through two Iceberg table properties — `wap.id` and `
 
 This is the pass. The branch holds the plate. The auditor inspects. The fast-forward commit is the moment the plate crosses the line. Diners never see a rejected dish.
 
-```mermaid
-sequenceDiagram
-    participant W as Writer (Spark / dbt)
-    participant B as Hidden branch (wap_<run_id>)
-    participant A as Auditor (dbt tests / GE / Soda)
-    participant M as main snapshot
-    participant C as Consumer (BI / ML)
-    C->>M: reads last good snapshot
-    W->>B: writes new data to branch
-    A->>B: runs quality checks
-    alt checks pass
-        A->>M: fast-forward commit (metadata only)
-        C->>M: now sees new snapshot
-    else checks fail
-        A--xB: branch kept for forensics
-        Note over M,C: main never moved;<br/>consumer still on good snapshot
-    end
-```
+![Sequence diagram of the Write-Audit-Publish loop. Writer sends data to a hidden branch, auditor inspects, and either fast-forwards main or quarantines the branch.](https://raw.githubusercontent.com/Vaibhavfrenz/blogs/main/blogs/diagrams/quality-wap-sequence.svg)
+
 *The Write-Audit-Publish loop on an Iceberg table. The publish is a single metadata commit — no data is copied, and consumers reading `main` are never blocked.*
 
 Netflix did not bolt this on with a wrapper service or a custom CI pipeline. They built it into the standard. That is why the rest of us can use it.
@@ -109,23 +90,8 @@ Netflix's public material is loud about detection and quiet about remediation. W
 
 This is where other FAANG teams have the better story. Airbnb publishes a [DQ Score](https://medium.com/airbnb-engineering/how-airbnb-built-wall-to-prevent-data-bugs-ad1b081d6e8f) — a consumer-facing number, scored across a few dimensions, that tells an analyst how much to trust a table. Uber publishes a [statistical detection program](https://www.uber.com/us/en/blog/monitoring-data-quality-at-scale/) tuned hard against alert fatigue. LinkedIn puts quality in the catalog through DataHub assertions. Each one chose a different layer to put the work in.
 
-```mermaid
-flowchart TB
-    P[Producer / Writer] --> S[Storage layer<br/>Iceberg table]
-    S --> PL[Pipeline layer<br/>Spark / dbt jobs]
-    PL --> CAT[Catalog layer<br/>DataHub / metadata]
-    CAT --> CON[Consumer layer<br/>BI / ML / analysts]
+![Flowchart showing Netflix, Uber, LinkedIn, and Airbnb each targeting a different layer of the data stack with their quality approach.](https://raw.githubusercontent.com/Vaibhavfrenz/blogs/main/blogs/diagrams/quality-faang-layers.svg)
 
-    NF["Netflix: WAP on Iceberg branches<br/>(prevents bad publishes)"]:::nf -.-> S
-    UB["Uber: statistical detection<br/>(flags anomalies in flight)"]:::ub -.-> PL
-    LI["LinkedIn: DataHub assertions<br/>(quality metadata in catalog)"]:::li -.-> CAT
-    AB["Airbnb: DQ Score<br/>(tells consumer how much to trust)"]:::ab -.-> CON
-
-    classDef nf fill:#e3170a,color:#fff,stroke:#000
-    classDef ub fill:#000,color:#fff,stroke:#000
-    classDef li fill:#0077b5,color:#fff,stroke:#000
-    classDef ab fill:#ff5a5f,color:#fff,stroke:#000
-```
 *Four FAANG teams, four different layers. Netflix is alone at the storage layer — which is why the pattern is both the most under-appreciated and the most incomplete without a consumer-facing answer.*
 
 Netflix's bet on the storage layer is the most under-appreciated of the four. It is also the most incomplete. WAP handles prevention — it stops the bad plate from reaching the diner. A consumer-facing score handles trust — it tells the diner how confident the kitchen is in tonight's menu. You want both.
@@ -151,12 +117,13 @@ Stop asking diners how the food was. Build a pass.
 ---
 
 ## Sources
-- [How does Netflix ensure the data quality for thousands of Apache Iceberg tables? — Vu Trinh](https://vutr.substack.com/p/how-does-netflix-ensure-the-data) — Vu Trinh, Substack
-- [AWS re:Invent 2023 NFX306 — Netflix's Journey to an Apache Iceberg-Only Data Lake](https://www.classcentral.com/course/youtube-aws-re-invent-2023-netflix-s-journey-to-an-apache-iceberg-only-data-lake-nfx306-405862) — AWS / Class Central, 2023
+
+- [How does Netflix ensure the data quality for thousands of Apache Iceberg tables? — Vu Trinh](https://vutr.substack.com/p/how-does-netflix-ensure-the-data)
+- [AWS re:Invent 2023 NFX306 — Netflix's Journey to an Apache Iceberg-Only Data Lake](https://www.classcentral.com/course/youtube-aws-re-invent-2023-netflix-s-journey-to-an-apache-iceberg-only-data-lake-nfx306-405862)
 - [Build Write-Audit-Publish pattern with Apache Iceberg branching and AWS Glue Data Quality](https://aws.amazon.com/blogs/big-data/build-write-audit-publish-pattern-with-apache-iceberg-branching-and-aws-glue-data-quality/) — AWS Big Data Blog
-- [Chill Your Data with Iceberg Write Audit Publish](https://medium.com/expedia-group-tech/chill-your-data-with-iceberg-write-audit-publish-746c9eb3db48) — Expedia Group Tech, Medium
+- [Chill Your Data with Iceberg Write Audit Publish](https://medium.com/expedia-group-tech/chill-your-data-with-iceberg-write-audit-publish-746c9eb3db48) — Expedia Group Tech
 - [How Airbnb Built "Wall" to Prevent Data Bugs](https://medium.com/airbnb-engineering/how-airbnb-built-wall-to-prevent-data-bugs-ad1b081d6e8f) — Airbnb Engineering
 - [Monitoring Data Quality at Scale with Statistical Modeling](https://www.uber.com/us/en/blog/monitoring-data-quality-at-scale/) — Uber Engineering
-- [Apache Iceberg documentation](https://iceberg.apache.org/) — Apache Software Foundation
-- [dbt tests documentation](https://docs.getdbt.com/docs/build/data-tests) — dbt Labs
-- [DAMA-DMBOK Body of Knowledge](https://www.dama.org/cpages/body-of-knowledge) — DAMA International
+- [Apache Iceberg documentation](https://iceberg.apache.org/)
+- [dbt tests documentation](https://docs.getdbt.com/docs/build/data-tests)
+- [DAMA-DMBOK Body of Knowledge](https://www.dama.org/cpages/body-of-knowledge)

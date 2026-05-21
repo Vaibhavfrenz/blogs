@@ -1,0 +1,15 @@
+flowchart LR
+    subgraph TOP["Quality-on-top (today)"]
+        A1[Spark / dbt job] -->|writes to| B1[(main table)]
+        B1 -->|visible to| C1[Dashboards]
+        B1 -->|then checked by| D1[dbt tests / Monte Carlo]
+        D1 -->|fires| E1[Slack alert]
+        E1 -.->|too late| C1
+    end
+    subgraph WAP["Quality-in-the-table (WAP)"]
+        A2[Spark / dbt job] -->|writes to| B2[(Hidden branch)]
+        B2 -->|inspected by| D2{Audit passes?}
+        D2 -->|Yes| F2[(main table)]
+        D2 -->|No| G2[Branch quarantined]
+        F2 -->|visible to| C2[Dashboards]
+    end
