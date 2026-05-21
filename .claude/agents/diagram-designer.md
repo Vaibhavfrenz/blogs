@@ -52,9 +52,25 @@ Insert images like this in the article markdown — use **relative paths**, not 
 - **Diagram types that render cleanly:** `flowchart`, `sequenceDiagram`, `classDiagram`, `erDiagram`, `stateDiagram-v2`
 - **Avoid:** Gantt charts, wide timeline diagrams — they squash on mobile
 
+### Anti-clipping rules (SVG viewport)
+
+The deploy Action renders at `--width 1200`. Content that overruns the viewport is silently clipped — text disappears at the right edge with no error. Always apply these limits:
+
+| Element | Hard limit |
+|---|---|
+| Node / box label | 25 characters |
+| Edge label (`-->|label|`) | 15 characters |
+| Subgraph title | 20 characters |
+| Sequence participant "as" name | 15 characters |
+| Sequence `Note over` text | 30 characters |
+
+**Layout rule:** Prefer `flowchart TB` (top-to-bottom) over `flowchart LR` (left-to-right). LR diagrams accumulate width with every node and clip far more easily. Only use LR for simple linear chains with short labels (≤ 4 nodes, labels ≤ 15 chars each).
+
+**Self-check before saving:** scan every label in the file. If any label exceeds the limits above, shorten it — use an abbreviation, split across two nodes, or rephrase. Never preserve a long label "for clarity" — a clipped label is worse than a short one.
+
 Example `.mmd` file content:
 ```
-flowchart LR
+flowchart TB
     A[Raw event] --> B{"Schema valid?"}
     B -->|Yes| C[(Iceberg table)]
     B -->|No| D[Dead-letter queue]

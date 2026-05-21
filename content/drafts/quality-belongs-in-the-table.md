@@ -27,7 +27,7 @@ The cost is not just the broken dashboard. It is the rollback, the Slack thread,
 
 This is the layer the industry got wrong. Catalogs, observability vendors, post-publish tests — all of them sit on top of the table. None of them stops the table from going bad in the first place.
 
-![Quality-on-top vs Write-Audit-Publish side by side. The old model alerts after bad data is already visible; WAP inspects before consumers can see it.](../../diagrams/quality-diagram-comparison.svg)
+![Quality-on-top vs Write-Audit-Publish. The old model alerts after bad data is already visible; WAP inspects before consumers can see it.](../../diagrams/quality-diagram-comparison.svg)
 
 *The old model alerts you after the bad row is already on dashboards. WAP inspects the plate before it crosses the line — consumers reading `main` never see a failed batch.*
 

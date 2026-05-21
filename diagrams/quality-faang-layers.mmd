@@ -1,13 +1,13 @@
 flowchart TB
-    P[Producer / Writer] --> S[Storage layer — Iceberg table]
-    S --> PL[Pipeline layer — Spark / dbt jobs]
-    PL --> CAT[Catalog layer — DataHub / metadata]
-    CAT --> CON[Consumer layer — BI / ML / analysts]
+    P[Producer] --> S[Storage — Iceberg]
+    S --> PL[Pipeline — Spark/dbt]
+    PL --> CAT[Catalog — DataHub]
+    CAT --> CON[Consumer — BI/ML]
 
-    NF["Netflix: WAP on Iceberg branches\n(prevents bad publishes)"]:::nf -.-> S
-    UB["Uber: statistical detection\n(flags anomalies in flight)"]:::ub -.-> PL
-    LI["LinkedIn: DataHub assertions\n(quality metadata in catalog)"]:::li -.-> CAT
-    AB["Airbnb: DQ Score\n(tells consumer how much to trust)"]:::ab -.-> CON
+    NF["Netflix: WAP on Iceberg"]:::nf -.-> S
+    UB["Uber: stats detection"]:::ub -.-> PL
+    LI["LinkedIn: DataHub assertions"]:::li -.-> CAT
+    AB["Airbnb: DQ Score"]:::ab -.-> CON
 
     classDef nf fill:#e3170a,color:#fff,stroke:#c0392b
     classDef ub fill:#333,color:#fff,stroke:#111
