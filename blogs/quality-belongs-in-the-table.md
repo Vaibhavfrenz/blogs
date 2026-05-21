@@ -3,7 +3,7 @@ title: "Quality Belongs in the Table, Not on Top of It"
 subtitle: "Netflix's WAP pattern shows where data quality really belongs — and most teams can steal it without rebuilding Netflix"
 slug: "quality-belongs-in-the-table"
 tags: "data-engineering, dataops, data-architecture"
-domain: "YOUR-BLOG.hashnode.dev"
+domain: "vaibhavfrenz.hashnode.dev"
 cover: "https://cdn.hashnode.com/res/hashnode/image/upload/PLACEHOLDER"
 saveAsDraft: false
 ignorePost: false
