@@ -33,6 +33,9 @@ buildFuture = false
   name = "hashnode"
   url = "https://vaibhavfrenz.hashnode.dev"
 
+# Only the posts/ section appears on the home page list — drafts/ is excluded
+mainSections = ["posts"]
+
 [taxonomies]
   tag = "tags"
   category = "categories"

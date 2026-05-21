@@ -145,38 +145,50 @@ Save the visuals summary to: drafts/[slug]-visuals.md
 
 Verify `drafts/[slug]-visuals.md` exists. Report: `✅ Diagrams complete → drafts/[slug]-visuals.md`
 
-## Step 6 — STOP FOR HUMAN REVIEW
+## Step 6 — Push as draft (auto)
 
-This is a hard stop. Do NOT call the github-publisher.
+Call the `github-publisher` agent in draft mode:
 
-Present this summary to the user:
+```
+Push the article for slug [slug] as a draft.
+
+Read drafts/[slug]-draft.md, write it to content/drafts/[slug].md with correct
+Hugo frontmatter (draft: false, date: today, tags as array, ShowToc: true).
+
+Rules:
+- No H1 in the body — remove any # Title at the top
+- Image paths must use relative format: ../../diagrams/[slug]-diagramN.svg
+- Stage content/drafts/[slug].md and any new diagrams/[slug]-diagram*.mmd files
+- Commit message: "Draft: [article title]"
+- Push to main
+
+After pushing, report the preview URL:
+  https://vaibhavfrenz.github.io/blogs/drafts/[slug]/
+```
+
+After the publisher confirms the push, report the full pipeline summary to the user:
 
 ---
 
-> ## Pipeline complete — ready for your review
+> ## Pipeline complete — draft live for review
 >
-> | Stage | Output |
+> | Stage | File |
 > |---|---|
 > | Research | `research/[slug]-notes.md` |
 > | Brief | `drafts/[slug]-brief.md` |
 > | Draft | `drafts/[slug]-draft.md` |
-> | Edit notes | `drafts/[slug]-edit-notes.md` |
-> | Visuals | `drafts/[slug]-visuals.md` |
 > | Diagrams | `diagrams/[slug]-diagram*.mmd` |
 >
-> **Editor verdict:** [verdict from edit notes]
+> **Editor verdict:** [verdict from edit-notes]
 >
-> **Please review:**
-> - Read `drafts/[slug]-draft.md` — does it say what you want to say?
-> - Check the diagram descriptions in `drafts/[slug]-visuals.md` — do the concepts land?
-> - Any sections to rewrite or cut?
+> **Preview URL** (live in ~2 min):
+> `https://vaibhavfrenz.github.io/blogs/drafts/[slug]/`
 >
-> When you're happy, say **"publish"** or **"ship it"** and I'll hand off to the `github-publisher` agent.
-> Or say **"revise [section]"** and I'll re-run the relevant agent.
+> Review the fully rendered article — look, diagrams, flow, everything.
+> When you're happy, say **`approve [slug]`** and the github-publisher will move it to production.
+> If something needs fixing, say **`revise [what]`** and I'll re-run the right agent.
 
 ---
-
-Do not publish. Do not suggest publishing is automatic. The user must explicitly approve.
 
 ## Error handling
 
@@ -187,6 +199,6 @@ Do not publish. Do not suggest publishing is automatic. The user must explicitly
 ## What you don't do
 
 - You don't write content yourself — that's each specialist's job
-- You don't publish — the user must approve and invoke github-publisher
-- You don't skip the human review checkpoint — ever
+- You don't move articles to content/posts/ — that's the github-publisher's job on approval
+- You don't skip the draft push step — every article must be reviewed before approval
 - You don't re-run an agent without telling the user first
