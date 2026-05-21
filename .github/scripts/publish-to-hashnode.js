@@ -6,11 +6,16 @@
  */
 
 const fs = require('fs');
+const https = require('https');
 const { execSync } = require('child_process');
 
 const API_KEY = process.env.HASHNODE_API_KEY;
 const PUBLICATION_ID = process.env.HASHNODE_PUBLICATION_ID;
-const GQL = 'https://gql.hashnode.com/';
+
+// Hashnode GraphQL endpoint — using https module directly to avoid
+// Node's built-in fetch silently converting POST redirects to GET.
+const GQL_HOST = 'gql.hashnode.com';
+const GQL_PATH = '/';
 
 if (!API_KEY || !PUBLICATION_ID) {
   console.error('Missing HASHNODE_API_KEY or HASHNODE_PUBLICATION_ID');
@@ -40,31 +45,51 @@ function parseFrontmatter(content) {
   return fm;
 }
 
-async function gql(query, variables) {
-  const res = await fetch(GQL, {
-    method: 'POST',
-    redirect: 'error',            // Fail loudly if redirected — never silently GET the homepage
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': API_KEY,   // Hashnode PATs are used directly, no Bearer prefix
-    },
-    body: JSON.stringify({ query, variables }),
+// Raw HTTPS POST — never follows redirects, so we always see the real response.
+function gql(query, variables) {
+  return new Promise((resolve, reject) => {
+    const body = JSON.stringify({ query, variables });
+    const options = {
+      hostname: GQL_HOST,
+      port: 443,
+      path: GQL_PATH,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(body),
+        'Authorization': API_KEY,   // Hashnode PATs used directly, no Bearer prefix
+      },
+    };
+
+    const req = https.request(options, (res) => {
+      const ct = res.headers['content-type'] || '';
+      console.log(`  API status: ${res.statusCode} | Content-Type: ${ct}`);
+
+      // Surface redirects immediately so we can fix the URL — never follow silently.
+      if (res.statusCode >= 300 && res.statusCode < 400) {
+        const loc = res.headers['location'] || '(no Location header)';
+        return reject(new Error(`Redirected (${res.statusCode}) → ${loc}. Update GQL_PATH in script.`));
+      }
+
+      let data = '';
+      res.on('data', chunk => { data += chunk; });
+      res.on('end', () => {
+        let json;
+        try {
+          json = JSON.parse(data);
+        } catch {
+          console.error(`  Raw response (first 300 chars): ${data.slice(0, 300)}`);
+          return reject(new Error(`Hashnode API returned non-JSON (status ${res.statusCode})`));
+        }
+        if (json.errors) return reject(new Error(JSON.stringify(json.errors, null, 2)));
+        resolve(json.data);
+      });
+    });
+
+    req.on('error', reject);
+    req.write(body);
+    req.end();
   });
-
-  const rawText = await res.text();
-  console.log(`  API status: ${res.status} | Content-Type: ${res.headers.get('content-type')}`);
-
-  let json;
-  try {
-    json = JSON.parse(rawText);
-  } catch {
-    // Log first 300 chars of unexpected response to help debug
-    console.error(`  Raw response (first 300 chars): ${rawText.slice(0, 300)}`);
-    throw new Error(`Hashnode API returned non-JSON (status ${res.status})`);
-  }
-
-  if (json.errors) throw new Error(JSON.stringify(json.errors, null, 2));
-  return json.data;
 }
 
 async function getPostBySlug(slug) {

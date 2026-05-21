@@ -128,7 +128,3 @@ Stop asking diners how the food was. Build a pass.
 - [dbt tests documentation](https://docs.getdbt.com/docs/build/data-tests)
 - [DAMA-DMBOK Body of Knowledge](https://www.dama.org/cpages/body-of-knowledge)
 
-
-
-
-
