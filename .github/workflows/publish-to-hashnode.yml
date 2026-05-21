@@ -26,6 +26,6 @@ jobs:
 
       - name: Publish changed articles to Hashnode
         env:
-          HASHNODE_API_KEY: ${{ secrets.HASHNODE_API_KEY }}
-          HASHNODE_PUBLICATION_ID: ${{ secrets.HASHNODE_PUBLICATION_ID }}
+          HASHNODE_API_KEY: ${{ secrets.HASHNODE_TOKEN }}
+          HASHNODE_PUBLICATION_ID: "6a0e5ae48b03460221ceb78f"
         run: node .github/scripts/publish-to-hashnode.js

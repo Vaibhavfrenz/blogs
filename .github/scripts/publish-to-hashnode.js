@@ -20,13 +20,22 @@ if (!API_KEY || !PUBLICATION_ID) {
 // ── helpers ──────────────────────────────────────────────────────────────────
 
 function parseFrontmatter(content) {
-  const match = content.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
-  if (!match) return null;
+  // Strip frontmatter (--- ... ---) and return fields + clean body
+  const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
+  if (!match) {
+    // No frontmatter — fall back to H1 title + full content
+    const titleMatch = content.match(/^#\s+(.+)/m);
+    return titleMatch ? { title: titleMatch[1].trim(), slug: '', _body: content } : null;
+  }
   const fm = {};
   match[1].split('\n').forEach(line => {
-    const [key, ...rest] = line.split(':');
-    if (key && rest.length) fm[key.trim()] = rest.join(':').trim().replace(/^"|"$/g, '');
+    const colonIdx = line.indexOf(':');
+    if (colonIdx === -1) return;
+    const key = line.slice(0, colonIdx).trim();
+    const val = line.slice(colonIdx + 1).trim().replace(/^"|"$/g, '');
+    if (key) fm[key] = val;
   });
+  // Body is everything after the closing --- (no frontmatter visible to readers)
   fm._body = match[2].trim();
   return fm;
 }
