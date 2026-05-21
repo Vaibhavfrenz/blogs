@@ -187,6 +187,7 @@ Read drafts/[slug]-draft.md. Write it to content/drafts/[slug].md with Hugo fron
 - date: (today's date YYYY-MM-DD)
 - tags: (array format ["tag1", "tag2"])
 - ShowToc: true
+- type: "post"
 - draft: false
 
 Rules:

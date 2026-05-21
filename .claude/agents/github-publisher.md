@@ -33,6 +33,7 @@ description: "Meta description (155 chars max)"
 date: YYYY-MM-DD
 tags: ["data-engineering", "dataops", "data-architecture"]
 ShowToc: true
+type: "post"
 draft: false
 ---
 ```
