@@ -27,7 +27,7 @@ The cost is not just the broken dashboard. It is the rollback, the Slack thread,
 
 This is the layer the industry got wrong. Catalogs, observability vendors, post-publish tests — all of them sit on top of the table. None of them stops the table from going bad in the first place.
 
-![Quality-on-top vs Write-Audit-Publish side by side. The old model alerts after bad data is already visible; WAP inspects before consumers can see it.](/diagrams/quality-diagram-comparison.svg)
+![Quality-on-top vs Write-Audit-Publish side by side. The old model alerts after bad data is already visible; WAP inspects before consumers can see it.](../../diagrams/quality-diagram-comparison.svg)
 
 *The old model alerts you after the bad row is already on dashboards. WAP inspects the plate before it crosses the line — consumers reading `main` never see a failed batch.*
 
@@ -47,7 +47,7 @@ The mechanism is exposed through two Iceberg table properties — `wap.id` and `
 
 This is the pass. The branch holds the plate. The auditor inspects. The fast-forward commit is the moment the plate crosses the line. Diners never see a rejected dish.
 
-![Sequence diagram of the Write-Audit-Publish loop. Writer sends data to a hidden branch, auditor inspects, and either fast-forwards main or quarantines the branch.](/diagrams/quality-wap-sequence.svg)
+![Sequence diagram of the Write-Audit-Publish loop. Writer sends data to a hidden branch, auditor inspects, and either fast-forwards main or quarantines the branch.](../../diagrams/quality-wap-sequence.svg)
 
 *The Write-Audit-Publish loop on an Iceberg table. The publish is a single metadata commit — no data is copied, and consumers reading `main` are never blocked.*
 
@@ -85,7 +85,7 @@ Netflix's public material is loud about detection and quiet about remediation. W
 
 This is where other FAANG teams have the better story. Airbnb publishes a [DQ Score](https://medium.com/airbnb-engineering/how-airbnb-built-wall-to-prevent-data-bugs-ad1b081d6e8f) — a consumer-facing number, scored across a few dimensions, that tells an analyst how much to trust a table. Uber publishes a [statistical detection program](https://www.uber.com/us/en/blog/monitoring-data-quality-at-scale/) tuned hard against alert fatigue. LinkedIn puts quality in the catalog through DataHub assertions. Each one chose a different layer to put the work in.
 
-![Flowchart showing Netflix, Uber, LinkedIn, and Airbnb each targeting a different layer of the data stack with their quality approach.](/diagrams/quality-faang-layers.svg)
+![Flowchart showing Netflix, Uber, LinkedIn, and Airbnb each targeting a different layer of the data stack with their quality approach.](../../diagrams/quality-faang-layers.svg)
 
 *Four FAANG teams, four different layers. Netflix is alone at the storage layer — which is why the pattern is both the most under-appreciated and the most incomplete without a consumer-facing answer.*
 

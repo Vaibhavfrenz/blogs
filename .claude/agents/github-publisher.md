@@ -72,12 +72,12 @@ Diagram images in drafts reference raw GitHub URLs like:
 https://raw.githubusercontent.com/Vaibhavfrenz/blogs/main/blogs/diagrams/foo.svg
 ```
 
-Change these to local Hugo static paths:
+Change these to **relative paths** (not absolute). The site is served at `/blogs/` subpath, so absolute paths like `/diagrams/foo.svg` resolve to the wrong root. From a post at `posts/<slug>/`, the relative path to `static/diagrams/` is:
 ```
-/diagrams/foo.svg
+../../diagrams/foo.svg
 ```
 
-The deploy Action renders all `.mmd` files from `diagrams/` to `static/diagrams/` before building, so any referenced SVG will be available at `/diagrams/<name>.svg`.
+The deploy Action renders all `.mmd` files from `diagrams/` to `static/diagrams/` before building, so any referenced SVG will be available two levels up from the post.
 
 ### Step 4 — Show the publish plan
 

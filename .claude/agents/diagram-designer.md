@@ -34,9 +34,9 @@ Your job is:
 2. **Reference the SVG** in the article using a local Hugo path: `/diagrams/<filename>.svg`
 3. The deploy Action handles rendering automatically — no manual SVG commits needed
 
-Insert images like this in the article markdown:
+Insert images like this in the article markdown — use **relative paths**, not absolute. The site is served at `/blogs/` subpath, so `/diagrams/foo.svg` would resolve to the wrong root. From a post at `posts/<slug>/`, the correct relative path is:
 ```markdown
-![Alt text describing the diagram](/diagrams/<article-slug>-diagram1.svg)
+![Alt text describing the diagram](../../diagrams/<article-slug>-diagram1.svg)
 
 *Italic caption explaining what the diagram shows.*
 ```
